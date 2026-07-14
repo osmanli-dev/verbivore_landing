@@ -45,18 +45,44 @@ docker compose -f docker-compose.dev.yml up --build
 
 ## Production / "enterprise" deployment
 
-Builds optimized images for both services:
+Docker builds and runs the two app services; nginx runs on the host as the
+reverse proxy.
 
 ```bash
 cp .env.example .env   # adjust DIRECTUS_* values for your domain/secrets
 docker compose up -d --build
 ```
 
-- Frontend: `http://localhost:3000`
-- Directus admin: `http://localhost:8055/admin`
+Both services bind to loopback only:
 
-Both services persist data via bind mounts to `directus-cms/` (`verbivore.db`,
+- Next.js frontend → `127.0.0.1:3000`
+- Directus → `127.0.0.1:8055`
+
+Both persist data via bind mounts to `directus-cms/` (`verbivore.db`,
 `uploads/`, `extensions/`), so `docker compose down` / rebuilds don't lose data.
+
+### Host nginx
+
+A ready-made config lives in [`nginx/verbivore.conf`](nginx/verbivore.conf):
+`verbivore.org` / `www.verbivore.org` → `127.0.0.1:3000`,
+`admin.verbivore.org` → `127.0.0.1:8055`.
+
+```bash
+sudo cp nginx/verbivore.conf /etc/nginx/sites-available/verbivore.conf
+sudo ln -s /etc/nginx/sites-available/verbivore.conf /etc/nginx/sites-enabled/
+sudo nginx -t && sudo systemctl reload nginx
+```
+
+Point `A` records for all three hostnames at the server, then issue
+certificates (certbot rewrites the config for HTTPS and installs the renewal
+timer itself):
+
+```bash
+sudo certbot --nginx -d verbivore.org -d www.verbivore.org -d admin.verbivore.org
+```
+
+Finally set `DIRECTUS_PUBLIC_URL=https://admin.verbivore.org` in `.env` and
+run `docker compose up -d` again.
 
 ---
 

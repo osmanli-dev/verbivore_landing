@@ -1,0 +1,35 @@
+{
+	"name": "excel-export-button",
+	"description": "Injects a floating \"Download Excel\" button on every list-based collection page in the admin",
+	"icon": "download",
+	"version": "1.0.0",
+	"keywords": [
+		"directus",
+		"directus-extension",
+		"directus-extension-hook"
+	],
+	"type": "module",
+	"files": [
+		"dist"
+	],
+	"directus:extension": {
+		"type": "hook",
+		"path": "dist/index.js",
+		"source": "src/index.js",
+		"host": "^10.10.0"
+	},
+	"scripts": {
+		"build": "directus-extension build",
+		"dev": "directus-extension build -w --no-minify",
+		"link": "directus-extension link",
+		"validate": "directus-extension validate"
+	},
+	"devDependencies": {
+		"@directus/extensions-sdk": "18.0.0"
+	},
+	"allowScripts": {
+		"esbuild@0.26.0": true,
+		"esbuild@0.27.7": true,
+		"vue-demi@0.14.10": true
+	}
+}

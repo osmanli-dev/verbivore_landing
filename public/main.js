@@ -729,16 +729,27 @@ function initPage() {
     }, { signal: sig });
   });
 
-  /* ── Mobile: Regulations quick-jump ── */
+  /* ── Mobile: Regulations / FAQ quick-jump ── */
   document.querySelectorAll('.mob-reg-jump').forEach(function(btn) {
     btn.addEventListener('click', function() {
       var id = btn.getAttribute('data-reg-id');
       var section = document.getElementById('reg-' + id);
       if (!section) return;
+      /* Active pill state (FAQ tabs) */
+      var strip = btn.closest('.mob-faq-jumps');
+      if (strip) {
+        strip.querySelectorAll('.mob-reg-jump').forEach(function(b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      }
       section.classList.add('open');
       section.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, { signal: sig });
   });
+
+  /* ── FAQ: mark first tab active on load ── */
+  var firstFaqPill = document.querySelector('.mob-faq-jumps .mob-reg-jump');
+  if (firstFaqPill) firstFaqPill.classList.add('active');
 
   /* ── Certificate verify (plain-JS fallback for any page that
      might embed the verify widget outside of the React component) ── */

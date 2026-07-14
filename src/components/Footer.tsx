@@ -42,6 +42,19 @@ export default async function Footer() {
         </div>
         <div className="footer-bottom">
           <span>&copy; {new Date().getFullYear()} {ss.footerCopyright}</span>
+          <span>
+            <strong>
+              Developed by{" "}
+              <a
+                href="https://scientra.one/"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ display: "inline", margin: 0, color: "#fff" }}
+              >
+                Nicat Osmanlı
+              </a>
+            </strong>
+          </span>
           <span>{ss.contactEmail}</span>
         </div>
       </div>

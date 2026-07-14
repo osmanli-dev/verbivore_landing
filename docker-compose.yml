@@ -13,7 +13,8 @@ services:
     container_name: verbivore-directus
     restart: unless-stopped
     ports:
-      - "8055:8055"
+      # loopback only — host nginx proxies admin.verbivore.org here
+      - "127.0.0.1:8055:8055"
     environment:
       HOST: "0.0.0.0"
       PORT: "8055"
@@ -30,6 +31,12 @@ services:
       - ./directus-cms/verbivore.db:/directus/verbivore.db
       - ./directus-cms/uploads:/directus/uploads
       - ./directus-cms/extensions:/directus/extensions
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:8055/server/health').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
 
   web:
     build:
@@ -38,9 +45,11 @@ services:
     container_name: verbivore-web
     restart: unless-stopped
     depends_on:
-      - directus
+      directus:
+        condition: service_healthy
     ports:
-      - "3000:3000"
+      # loopback only — host nginx proxies verbivore.org here
+      - "127.0.0.1:3000:3000"
     environment:
       NODE_ENV: production
       NEXT_TELEMETRY_DISABLED: "1"

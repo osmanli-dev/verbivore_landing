@@ -1509,7 +1509,22 @@ h1,h2,h3,h4,.section-title,.page-hero h1,.hero h1{font-family:var(--font-baloo),
      ══════════════════════════════════════════════════════ */
   .mob-faq-jumps {
     position: sticky; top: 0; z-index: 5;
-    background: #fff; padding-top: 10px; padding-bottom: 10px; margin-bottom: 8px;
+    background: #f4f6fb;
+    border-bottom: 1px solid var(--line);
+    padding: 10px 0 12px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 12px rgba(0,0,0,.06);
+  }
+  .mob-faq-jumps .mob-reg-jump {
+    background: rgba(255,255,255,.7);
+    border-color: rgba(30,40,100,.1);
+    color: var(--muted);
+  }
+  .mob-faq-jumps .mob-reg-jump.active {
+    background: var(--orange);
+    border-color: var(--orange);
+    color: #fff;
+    box-shadow: 0 3px 10px rgba(245,130,32,.35);
   }
 
   /* ══════════════════════════════════════════════════════
@@ -2676,3 +2691,288 @@ h1,h2,h3,h4,.section-title,.page-hero h1,.hero h1{font-family:var(--font-baloo),
 .eh-stat span{display:block;font-size:11px;font-weight:850;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.62);margin-top:4px}
 @media(max-width:1100px){.eh-flags{display:none}}
 @media(max-width:650px){.eh-stats{gap:8px}.eh-stat{padding:12px 14px;min-width:0}.eh-stat b{font-size:22px}}
+
+/* ══════════════════════════════════════════════════════════════
+   MOBILE UX POLISH — v2
+   All rules appended last so they win at equal specificity.
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── 1. Global touch behaviour ───────────────────────────────
+   • Kills the 300ms tap delay across the whole site.
+   • Removes the grey flash on iOS/Android when tapping links.
+   ─────────────────────────────────────────────────────────── */
+*,*::before,*::after{-webkit-tap-highlight-color:rgba(0,0,0,0)}
+button,a,[role="button"],input,select,textarea,label{touch-action:manipulation}
+
+/* ── 2. Overscroll containment — prevent page drift when
+        the user swipes inside a horizontal strip ──────────── */
+.mob-stat-strip,
+.mob-pill-tabs,
+.mob-pdf-row,
+.mob-country-filters,
+.mob-cat-tabs,
+.mob-reg-jumps,
+.mob-round-tabs,
+.mob-news-scroll,
+.gf-phase-strip,
+.edition-tabs,
+.schedule-date-strip,
+.gallery-grid{overscroll-behavior-x:contain}
+
+/* ── 3. Accessible focus ring ────────────────────────────── */
+:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
+button:focus-visible,a:focus-visible{border-radius:6px}
+
+/* ── 4. Touch targets: all pill/tab/filter buttons must be
+        at least 44 × 44 px per Apple HIG / WCAG ──────────── */
+.mob-cat-tab,
+.mob-pill-tab,
+.mob-filter-pill,
+.mob-reg-jump,
+.mob-round-tab{min-height:44px;display:inline-flex;align-items:center;justify-content:center}
+
+/* FAQ + reg headers are full-width buttons — make sure they
+   are comfortably tall on fat fingers ─────────────────────── */
+.faq-q{min-height:56px}
+.reg-header{min-height:54px}
+.participant-header{min-height:54px}
+.prelim-round-btn{min-height:52px}
+
+/* ── 5. HERO PADDING — cascade fix ──────────────────────────
+   An earlier @media(max-width:600px) block sets padding:60px
+   on .hero; that overwrote the narrower 480px override.  This
+   pair restores sane values for small phones. ─────────────── */
+@media(max-width:480px){
+  .hero{padding:36px 0 20px}
+}
+@media(max-width:360px){
+  .hero{padding:28px 0 14px}
+}
+
+/* ── 6. GALLERY — horizontal scroll-snap carousel on mobile ─
+   Replaces stacked columns with a swipeable filmstrip.
+   The .gallery-side wrapper becomes `display:contents` so its
+   two child cards flow directly into the flex row alongside
+   the feature card. ──────────────────────────────────────── */
+@media(max-width:768px){
+  .gallery-grid{
+    display:flex;flex-direction:row;
+    gap:12px;overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+    scroll-snap-type:x mandatory;
+    scrollbar-width:none;
+    padding:2px 0 12px;
+    /* override the earlier 1-col grid */
+    grid-template-columns:unset;
+  }
+  .gallery-grid::-webkit-scrollbar{display:none}
+
+  /* feature card: slightly wider so it reads as "hero" */
+  .gallery-feature{
+    flex:0 0 auto;
+    min-width:min(300px,82vw);
+    min-height:260px;
+    border-radius:22px;
+    scroll-snap-align:start;
+  }
+
+  /* flatten the side-cards wrapper into the flex parent */
+  .gallery-side{
+    display:contents;
+  }
+
+  /* side cards */
+  .gallery-item{
+    flex:0 0 auto;
+    min-width:min(250px,72vw);
+    min-height:240px;
+    border-radius:20px;
+    scroll-snap-align:start;
+  }
+}
+
+/* ── 7. Top strip — hide on very small viewports ──────────── */
+@media(max-width:400px){
+  .top-strip{display:none}
+}
+
+/* ── 8. Hero mini-cards — keep 3-col but turn into a
+        scroll strip at 320 px so nothing overflows ────────── */
+@media(max-width:339px){
+  .hero-mini{
+    display:flex;flex-direction:row;
+    overflow-x:auto;-webkit-overflow-scrolling:touch;
+    scroll-snap-type:x mandatory;
+    scrollbar-width:none;
+    gap:8px;max-width:100%;
+    /* override the earlier repeat(3,1fr) grid */
+    grid-template-columns:unset;
+    padding-bottom:4px;
+  }
+  .hero-mini::-webkit-scrollbar{display:none}
+  .mini-card{flex:0 0 auto;min-width:86px;scroll-snap-align:start}
+}
+
+/* ── 9. Countdown — tighter on very narrow phones ──────────── */
+@media(max-width:380px){
+  .countdown-strip{
+    gap:6px;padding:10px 12px;
+    justify-content:space-around;
+  }
+  .countdown-unit{min-width:36px}
+  .countdown-num{font-size:20px}
+  .countdown-label{font-size:9px}
+  .countdown-sep{font-size:22px}
+}
+
+/* ── 10. btn-sm stays inline on mobile ─────────────────────── */
+@media(max-width:650px){
+  .btn-sm{width:auto}
+}
+
+/* ── 11. Modal padding on small phones ─────────────────────── */
+@media(max-width:600px){
+  .modal-overlay{padding:12px 10px max(12px,env(safe-area-inset-bottom))}
+  .modal-box{border-radius:22px;max-height:90vh;padding:22px 16px}
+}
+
+/* ── 12. iOS safe-area insets ───────────────────────────────── */
+.footer{padding-bottom:max(26px,env(safe-area-inset-bottom))}
+/* mob-menu-footer already uses env() — no change needed */
+
+/* ── 13. Page hero — tighter text at tiny sizes ─────────────── */
+@media(max-width:360px){
+  .page-hero{padding:26px 0 18px}
+  .page-hero h1{font-size:clamp(20px,6.5vw,30px)}
+  .page-hero p{font-size:13px;margin-top:8px}
+  .breadcrumb{font-size:11px;gap:5px;flex-wrap:wrap}
+}
+
+/* ── 14. Edition tabs — trailing spacer gives visual cue
+         that the list scrolls ─────────────────────────────── */
+@media(max-width:600px){
+  .edition-tabs::after{
+    content:'';display:block;flex-shrink:0;
+    width:14px;height:1px; /* invisible spacer */
+  }
+  .edition-tab{font-size:12px;padding:8px 12px}
+}
+
+/* ── 15. Eyebrow label — compact on 375 px ─────────────────── */
+@media(max-width:380px){
+  .eyebrow{font-size:10px;padding:5px 10px;gap:6px}
+  .eyebrow span{width:7px;height:7px}
+}
+
+/* ── 16. News ticker — slightly smaller text on tiny phones ─── */
+@media(max-width:400px){
+  .news-label{font-size:10px;padding:10px 12px}
+  .news-track a{font-size:12px;margin-right:22px}
+}
+
+/* ── 17. Footer — tighter spacing on narrow phones ──────────── */
+@media(max-width:480px){
+  .footer h4{margin-bottom:8px}
+  .footer a{margin:7px 0}
+  .footer-grid{gap:18px}
+  .footer img{width:140px}
+}
+
+/* ── 18. Result table — hide third column at 360 px ──────────── */
+@media(max-width:360px){
+  .result-table th:nth-child(3),.result-table td:nth-child(3){display:none}
+}
+
+/* ── 19. Verify page — compact at 380 px ────────────────────── */
+@media(max-width:380px){
+  .verify-wrap{padding:22px 14px;border-radius:18px}
+  .verify-icon{width:56px;height:56px;font-size:26px;border-radius:20px}
+  .verify-wrap h2{font-size:20px}
+  .verify-wrap>p{font-size:13px;margin-bottom:22px}
+}
+
+/* ── 20. Global Final hero — tighten on tiny phones ─────────── */
+@media(max-width:380px){
+  .gf-hero{padding:26px 0 34px}
+  .gf-hero-title{font-size:clamp(24px,7vw,38px)}
+  .gf-hero-sub{font-size:14px}
+}
+
+/* ── 21. Mob stepper + calendar rows — tight on 360 px ──────── */
+@media(max-width:360px){
+  .mob-stepper-body strong{font-size:14px}
+  .mob-stepper-body p{font-size:12px;line-height:1.5}
+  .mob-cal-date{min-width:48px;font-size:11px}
+  .mob-cal-row strong{font-size:13px}
+  .mob-cal-row span{font-size:11px}
+}
+
+/* ── 22. Timeline rows — compact at 400 px ───────────────────── */
+@media(max-width:400px){
+  .mob-timeline-time{min-width:56px;font-size:11px;padding:6px}
+  .mob-timeline-body strong{font-size:12px}
+  .mob-timeline-body span{font-size:11px}
+}
+
+/* ── 23. Partner grid — 2 cols at 360 px ────────────────────── */
+@media(max-width:360px){
+  .partner-row{grid-template-columns:1fr 1fr;gap:8px}
+  .partner-card{min-height:80px;padding:12px 8px}
+  .partner-logo{font-size:28px}
+  .partner-name{font-size:11px}
+}
+
+/* ── 24. Rich-text images + tables can't overflow ────────────── */
+.news-article-body img{max-width:100%;height:auto}
+.news-article-body table{max-width:100%;overflow-x:auto;display:block}
+.reg-body table{max-width:100%;overflow-x:auto;display:block}
+
+/* ── 25. Prevent user-select on swipeable/tappable tiles ─────── */
+.mob-quicklink-tile,
+.mob-news-row,
+.mob-country-row,
+.mob-stepper-item,
+.mob-cal-row,
+.mob-exam-card,
+.mob-edition-card{-webkit-user-select:none;user-select:none}
+
+/* ── 26. Horizontal scroll strips: trailing whitespace
+         gives a visual "peek" cue that more items exist ────── */
+.mob-stat-strip::after,
+.mob-pdf-row::after,
+.mob-news-scroll::after{
+  content:'';display:block;flex-shrink:0;width:4px;
+}
+
+/* ── 27. Nation / schedule date strip scrolls smoothly ──────── */
+.schedule-date-strip{scroll-behavior:smooth}
+
+/* ── 28. Section heading at 360 px ──────────────────────────── */
+@media(max-width:360px){
+  .section-title{font-size:clamp(20px,6vw,28px)}
+  .kicker{font-size:10px}
+}
+
+/* ── 29. Edition sub-page panels — breathe on 375 px ────────── */
+@media(max-width:380px){
+  .edition-card-body{padding:16px 14px 18px}
+  .edition-card-title{font-size:18px}
+  .mob-edition-title{font-size:18px}
+  .mob-edition-body{padding:14px 14px}
+}
+
+/* ── 30. GF phase strip: ensure it scrolls inside viewport ───── */
+@media(max-width:600px){
+  .gf-phase-step{min-width:130px}
+  .gf-phase-info strong{font-size:12px}
+  .gf-phase-info span{font-size:10px}
+  .gf-phase-line{width:20px}
+}
+
+/* ── 31. Editions hero stats — label fits in 3 cols at 320 px ──── */
+@media(max-width:380px){
+  .eh-stat span{font-size:9px;letter-spacing:.04em;line-height:1.3}
+  .eh-stat b{font-size:19px}
+  .eh-stats{gap:6px}
+  .eh-stat{padding:10px 10px;border-radius:16px}
+}

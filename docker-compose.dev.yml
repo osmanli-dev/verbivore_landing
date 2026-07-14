@@ -27,6 +27,12 @@ services:
       - ./directus-cms/uploads:/directus/uploads
       - ./directus-cms/extensions:/directus/extensions
       - ./directus-cms/seed:/directus/seed
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:8055/server/health').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
 
   web:
     build:
@@ -34,7 +40,8 @@ services:
       dockerfile: Dockerfile.dev
     container_name: verbivore-web-dev
     depends_on:
-      - directus
+      directus:
+        condition: service_healthy
     ports:
       - "3000:3000"
     environment:

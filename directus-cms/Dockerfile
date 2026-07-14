@@ -1,13 +1,16 @@
 # Directus CMS — built from the project's own package.json/extensions so the
 # custom emoji-picker / icon-picker interfaces work the same as in local dev.
-FROM node:20-bookworm-slim
+FROM node:22-bookworm-slim
 
 WORKDIR /directus
 
 RUN apt-get update && apt-get install -y --no-install-recommends python3 make g++ \
     && rm -rf /var/lib/apt/lists/*
 
+# patches/ must be present before `npm ci` — the postinstall hook runs
+# patch-package (e.g. the @directus/app az-AZ locale patch).
 COPY package.json package-lock.json ./
+COPY patches ./patches
 RUN npm ci --omit=dev
 
 # The prebuilt sqlite3 binary requires a newer glibc than bookworm ships —
