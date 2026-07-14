@@ -42,18 +42,11 @@ export default async function Footer() {
         </div>
         <div className="footer-bottom">
           <span>&copy; {new Date().getFullYear()} {ss.footerCopyright}</span>
-          <span>
-            <strong>
-              Developed by{" "}
-              <a
-                href="https://scientra.one/"
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{ display: "inline", margin: 0, color: "#fff" }}
-              >
-                Nicat Osmanlı
-              </a>
-            </strong>
+          <span className="footer-credit">
+            Developed by{' '}
+            <a href="https://greph.scientra.one" target="_blank" rel="noopener noreferrer">Nicat Osmanlı</a>
+            <span className="credit-sep">·</span>
+            <a href="https://scientra.one" target="_blank" rel="noopener noreferrer">Scientra One</a>
           </span>
           <span>{ss.contactEmail}</span>
         </div>
