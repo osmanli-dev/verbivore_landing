@@ -14,6 +14,12 @@ COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
 
+# The /cms-assets rewrite destination is baked into routes-manifest.json at
+# build time, so DIRECTUS_URL must point at the compose-network hostname here
+# (runtime env only affects server-side fetches, not the rewrite).
+ARG DIRECTUS_URL=http://directus:8055
+ENV DIRECTUS_URL=$DIRECTUS_URL
+
 RUN npm run build
 
 # ── Stage 3: production runner ─────────────────────────
