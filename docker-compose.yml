@@ -32,7 +32,10 @@ services:
       - ./directus-cms/uploads:/directus/uploads
       - ./directus-cms/extensions:/directus/extensions
     healthcheck:
-      test: ["CMD", "node", "-e", "fetch('http://localhost:8055/server/health').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"]
+      # /server/health requires admin permissions in this project's DB (403 for
+      # public), which left the container permanently unhealthy and blocked the
+      # web service from starting — /server/ping is always public.
+      test: ["CMD", "node", "-e", "fetch('http://localhost:8055/server/ping').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"]
       interval: 15s
       timeout: 5s
       retries: 10
