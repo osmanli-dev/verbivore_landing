@@ -61,6 +61,21 @@ Both services bind to loopback only:
 Both persist data via bind mounts to `directus-cms/` (`verbivore.db`,
 `uploads/`, `extensions/`), so `docker compose down` / rebuilds don't lose data.
 
+### CMS data vs git
+
+Live CMS data (`directus-cms/verbivore.db` and `directus-cms/uploads/`) is
+**not tracked by git** — content changes made by editors in Directus survive
+every `git pull` / redeploy. A snapshot for fresh installs is committed in
+`directus-cms/seed-data/`; on a brand-new clone run once:
+
+```bash
+./scripts/bootstrap-data.sh   # copies seed db + uploads into place if missing
+```
+
+To refresh the committed snapshot from live data (e.g. before migrating to a
+new server): stop the stack, copy `verbivore.db` + `uploads/` over
+`directus-cms/seed-data/`, commit.
+
 ### Host nginx
 
 A ready-made config lives in [`nginx/verbivore.conf`](nginx/verbivore.conf):

@@ -8,7 +8,11 @@
 # production
 /build
 
-# database (verbivore.db itself is committed so deployments ship with the dev data)
+# live CMS data — never tracked, so `git pull` on the server can't clobber
+# content editors' changes. Fresh installs: run scripts/bootstrap-data.sh,
+# which copies the committed snapshot from directus-cms/seed-data/.
+/directus-cms/verbivore.db
+/directus-cms/uploads/
 *.db-shm
 *.db-wal
 
