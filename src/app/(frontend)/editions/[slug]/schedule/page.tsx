@@ -1,10 +1,25 @@
+import { pageMetadata } from '@/lib/seo'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { getEditionBySlug } from '@/lib/globals'
+import { getEditionBySlug, editionHost } from '@/lib/globals'
 import { EditionTabs } from '@/components/EditionTabs'
 import { Icon, IconBadge } from '@/components/Icon'
 
 export const dynamic = 'force-dynamic'
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  const ed = await getEditionBySlug(slug)
+  if (!ed) return {}
+  const host = editionHost(ed)
+  const base = [ed.year, host.name, 'Grand Final'].filter(Boolean).join(' ')
+  return pageMetadata({
+    title: `${base} - Schedule`,
+    description: `Day-by-day schedule of the ${base}: ceremonies, exams, excursions and the awards night.`,
+    path: `/editions/${slug}/schedule`,
+    image: (ed.heroImage as any)?.url ?? (ed.image as any)?.url ?? undefined,
+  })
+}
 
 const DAY_COLORS = [
   'linear-gradient(135deg,var(--navy),#222b72)',

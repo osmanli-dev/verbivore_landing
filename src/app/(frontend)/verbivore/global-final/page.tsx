@@ -1,8 +1,9 @@
+import { pageMetadata } from '@/lib/seo'
 import Link from 'next/link'
 import { getEditions, editionHost } from '@/lib/globals'
 
 export const dynamic = 'force-dynamic'
-export const metadata = { title: 'Grand Final | Verbivore The Contest' }
+export const metadata = pageMetadata({ title: "Grand Final", description: "The Verbivore Grand Final - the international culmination where national champions from 35+ countries compete for the world title.", path: "/verbivore/global-final" })
 
 // ── Phase resolution ──────────────────────────────────────────────────────────
 function resolvePhase(edition: any): 1 | 2 | 3 | 4 {

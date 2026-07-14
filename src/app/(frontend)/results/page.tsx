@@ -1,6 +1,7 @@
+import { pageMetadata } from '@/lib/seo'
 import Link from 'next/link'
 
-export const metadata = { title: 'Results | Verbivore The Contest' }
+export const metadata = pageMetadata({ title: "Results", description: "Official Verbivore results by stage and country: download Preliminary Round and National Final result PDFs.", path: "/results" })
 
 const ROUNDS = [
   {

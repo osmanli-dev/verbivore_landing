@@ -1,8 +1,9 @@
+import { pageMetadata } from '@/lib/seo'
 import Link from 'next/link'
 import { getAllSampleResources, getSampleQuestionsPage } from '@/lib/globals'
 
 export const dynamic = 'force-dynamic'
-export const metadata = { title: 'Nümunə Suallar və Sillabus | Verbivore The Contest' }
+export const metadata = pageMetadata({ title: "Sample Questions & Syllabus", description: "Download sample questions and syllabus PDFs for every Verbivore stage and age category, structured by round and level.", path: "/verbivore/sample-questions" })
 
 type CatGroup   = { category: string; grade: string; files: { title: string; pdfUrl: string }[] }
 type RoundGroup = { roundLabel: string; roundIcon: string; categories: CatGroup[] }

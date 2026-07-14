@@ -1,9 +1,10 @@
+import { pageMetadata } from '@/lib/seo'
 import Link from 'next/link'
 import { getEditions } from '@/lib/globals'
 import { ResultsList } from '@/components/ResultsList'
 
 export const dynamic = 'force-dynamic'
-export const metadata = { title: 'Results | Verbivore The Contest' }
+export const metadata = pageMetadata({ title: "Edition Results", description: "Official results of Verbivore Grand Final editions: medal tables, rankings and country performance.", path: "/editions/results" })
 
 export default async function ResultsPage() {
   const editions = await getEditions()

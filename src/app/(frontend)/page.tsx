@@ -1,7 +1,21 @@
 import Link from 'next/link'
 import { getSiteSettings, getHomePage, getNewsItems, getPartners, getGallery, getExamTimes } from '@/lib/globals'
+import { pageMetadata, SITE_NAME, DEFAULT_DESCRIPTION } from '@/lib/seo'
 
 export const dynamic = 'force-dynamic'
+
+export async function generateMetadata() {
+  const hp = await getHomePage()
+  const title = `${SITE_NAME} — International English Olympiad`
+  const meta = pageMetadata({
+    title,
+    description: hp.heroSubtitle || DEFAULT_DESCRIPTION,
+    path: '',
+    image: (hp.heroImage as any)?.url ?? undefined,
+  })
+  meta.title = { absolute: title }
+  return meta
+}
 
 const FALLBACK_HERO_IMG = 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=1600&q=80'
 

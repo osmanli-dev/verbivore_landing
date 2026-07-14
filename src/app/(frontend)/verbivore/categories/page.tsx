@@ -1,8 +1,9 @@
+import { pageMetadata } from '@/lib/seo'
 import Link from 'next/link'
 import { getCategories } from '@/lib/globals'
 
 export const dynamic = 'force-dynamic'
-export const metadata = { title: 'Categories | Verbivore The Contest' }
+export const metadata = pageMetadata({ title: "Age Categories", description: "Verbivore age categories from Junior to Senior: age ranges, exam structure and topics for each level of the international English olympiad.", path: "/verbivore/categories" })
 
 export default async function CategoriesPage() {
   const cats = await getCategories()

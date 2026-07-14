@@ -2,8 +2,26 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { directusFetch, fileUrl } from '@/lib/directus'
 import { getNewsItems } from '@/lib/globals'
+import { pageMetadata, plainText, jsonLd, SITE_URL, SITE_NAME } from '@/lib/seo'
 
 export const dynamic = 'force-dynamic'
+
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+  try {
+    const n = await directusFetch(`/items/news/${encodeURIComponent(id)}?fields=*`)
+    if (!n || n.status !== 'published') return {}
+    return pageMetadata({
+      title: n.title,
+      description: plainText(n.excerpt || n.content, 160) || undefined,
+      path: `/news/${id}`,
+      image: n.image ? `/cms-assets/${n.image}` : undefined,
+      ogType: 'article',
+    })
+  } catch {
+    return {}
+  }
+}
 
 const CATEGORY_COLOR: Record<string, { bg: string; color: string }> = {
   Announcement: { bg: 'rgba(255,130,26,.15)', color: 'var(--orange)' },
@@ -47,8 +65,20 @@ export default async function NewsArticlePage({
   const clr      = CATEGORY_COLOR[cat] || CATEGORY_COLOR.Announcement
   const imageUrl = article.image && typeof article.image === 'object' ? article.image.url : null
 
+  const articleJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'NewsArticle',
+    headline: article.title,
+    datePublished: article.date || undefined,
+    image: imageUrl ? [`${SITE_URL}${imageUrl}`] : undefined,
+    mainEntityOfPage: `${SITE_URL}/news/${article.id}`,
+    publisher: { '@type': 'Organization', name: SITE_NAME, logo: { '@type': 'ImageObject', url: `${SITE_URL}/verbivore-logo.png` } },
+    author: { '@type': 'Organization', name: SITE_NAME },
+  }
+
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd(articleJsonLd) }} />
       {/* ── HERO ──────────────────────────────────────────── */}
       <section className="page-hero">
         <div className="container">

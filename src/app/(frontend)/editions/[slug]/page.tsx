@@ -1,9 +1,24 @@
+import { pageMetadata } from '@/lib/seo'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getEditionBySlug, editionHost } from '@/lib/globals'
 import { EditionTabs } from '@/components/EditionTabs'
 
 export const dynamic = 'force-dynamic'
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  const ed = await getEditionBySlug(slug)
+  if (!ed) return {}
+  const host = editionHost(ed)
+  const base = [ed.year, host.name, 'Grand Final'].filter(Boolean).join(' ')
+  return pageMetadata({
+    title: `${base}`,
+    description: ed.description || `The ${base} - an international week of academic excellence and friendship.`,
+    path: `/editions/${slug}`,
+    image: (ed.heroImage as any)?.url ?? (ed.image as any)?.url ?? undefined,
+  })
+}
 
 export default async function EditionAboutPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params

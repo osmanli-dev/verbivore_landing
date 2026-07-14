@@ -1,9 +1,10 @@
+import { pageMetadata } from '@/lib/seo'
 import Link from 'next/link'
 import { getCountries } from '@/lib/globals'
 import WorldMapClient from '@/components/WorldMapClient'
 
 export const dynamic = 'force-dynamic'
-export const metadata = { title: 'Countries & Territories | Verbivore The Contest' }
+export const metadata = pageMetadata({ title: "Countries & Territories", description: "Participating countries and territories of the Verbivore English olympiad and accredited national representatives - find your country and how to register.", path: "/verbivore/countries-territories" })
 
 function flagToCode(flag: string): string | null {
   if (!flag) return null

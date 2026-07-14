@@ -1,8 +1,9 @@
+import { pageMetadata } from '@/lib/seo'
 import Link from 'next/link'
 import { getExamTimes } from '@/lib/globals'
 
 export const dynamic = 'force-dynamic'
-export const metadata = { title: 'Exam Time | Verbivore The Contest' }
+export const metadata = pageMetadata({ title: "Exam Time", description: "Official Verbivore exam dates and times by country. Check when the Preliminary Round, National Final and Grand Final take place in your region.", path: "/verbivore/exam-time" })
 
 const STATUS_STYLE: Record<string, { bg: string; color: string; label: string }> = {
   Confirmed:     { bg: 'rgba(47,207,127,.15)',  color: 'var(--green)',  label: '✅ Confirmed' },

@@ -1,8 +1,9 @@
+import { pageMetadata } from '@/lib/seo'
 import Link from 'next/link'
 import { getAboutPage } from '@/lib/globals'
 
 export const dynamic = 'force-dynamic'
-export const metadata = { title: 'About Verbivore | The Contest' }
+export const metadata = pageMetadata({ title: "About Verbivore", description: "The international English olympiad for school students aged 9-17, run with schools and national educational bodies across 35+ countries.", path: "/verbivore/about" })
 
 const DEFAULT_MISSION_CARDS = [
   { icon: '🎯', title: 'Skill-based', text: 'Test real English ability, not rote memorisation.' },

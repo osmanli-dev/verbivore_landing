@@ -1,8 +1,10 @@
+import { pageMetadata } from '@/lib/seo'
 import Link from 'next/link'
 import { getFaqItems } from '@/lib/globals'
+import { jsonLd, plainText } from '@/lib/seo'
 
 export const dynamic = 'force-dynamic'
-export const metadata = { title: 'FAQ | Verbivore The Contest' }
+export const metadata = pageMetadata({ title: "Frequently Asked Questions", description: "Answers to common questions about Verbivore participation, registration, exams, results and the Grand Final.", path: "/faq" })
 
 const GROUPS = ['Students & Parents', 'Schools & Educators', 'Grand Final & Editions']
 
@@ -14,8 +16,21 @@ export default async function FAQPage() {
     items: docs.filter((d) => d.group === g),
   }))
 
+  const faqJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: docs.map((d: any) => ({
+      '@type': 'Question',
+      name: d.question,
+      acceptedAnswer: { '@type': 'Answer', text: plainText(d.answer, 500) },
+    })),
+  }
+
   return (
     <>
+      {docs.length > 0 && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd(faqJsonLd) }} />
+      )}
       <section className="page-hero">
         <div className="container">
           <div className="breadcrumb"><Link href="/">Home</Link> <span>›</span> <span>FAQ</span></div>

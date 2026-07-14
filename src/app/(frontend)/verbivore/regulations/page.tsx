@@ -1,9 +1,10 @@
+import { pageMetadata } from '@/lib/seo'
 import React from 'react'
 import Link from 'next/link'
 import { getRegulations } from '@/lib/globals'
 
 export const dynamic = 'force-dynamic'
-export const metadata = { title: 'Regulations | Verbivore The Contest' }
+export const metadata = pageMetadata({ title: "Regulations", description: "Official rules and regulations of the Verbivore English olympiad: eligibility, exam conduct, scoring, appeals and awards.", path: "/verbivore/regulations" })
 
 function formatContent(text: string) {
   const lines = text.split('\n')

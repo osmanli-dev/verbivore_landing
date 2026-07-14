@@ -1,8 +1,9 @@
+import { pageMetadata } from '@/lib/seo'
 import Link from 'next/link'
 import { getNationalFinalResources, getNationalFinalPage } from '@/lib/globals'
 
 export const dynamic = 'force-dynamic'
-export const metadata = { title: 'National Final | Verbivore The Contest' }
+export const metadata = pageMetadata({ title: "National Final", description: "The second stage of Verbivore: top scorers from the Preliminary Round compete in a country-level final for a place in the Grand Final.", path: "/verbivore/national-final" })
 
 type CatGroup    = { category: string; grade: string; files: { title: string; pdfUrl: string }[] }
 type RoundGroup  = { roundLabel: string; roundIcon: string; categories: CatGroup[] }

@@ -1,8 +1,9 @@
+import { pageMetadata } from '@/lib/seo'
 import Link from 'next/link'
 import { getNewsItems } from '@/lib/globals'
 
 export const dynamic = 'force-dynamic'
-export const metadata = { title: 'News & Announcements | Verbivore The Contest' }
+export const metadata = pageMetadata({ title: "News & Announcements", description: "Latest Verbivore news: announcements, event updates and press releases from the international English olympiad.", path: "/news" })
 
 const CATEGORY_COLOR: Record<string, { bg: string; color: string; accent: string }> = {
   Announcement: { bg: 'rgba(255,130,26,.10)', color: 'var(--orange)',  accent: 'var(--orange)' },

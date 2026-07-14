@@ -1,8 +1,21 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getCategoryBySlug } from '@/lib/globals'
+import { pageMetadata } from '@/lib/seo'
 
 export const dynamic = 'force-dynamic'
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  const cat = await getCategoryBySlug(slug)
+  if (!cat) return {}
+  return pageMetadata({
+    title: `${cat.name}${cat.ageRange ? ` (${cat.ageRange})` : ''} — Category`,
+    description: cat.description || `The ${cat.name} category of the Verbivore international English olympiad: exam structure, topics and sample questions.`,
+    path: `/verbivore/categories/${slug}`,
+    image: (cat.coverImage as any)?.url ?? undefined,
+  })
+}
 
 function isDirectVideoFile(url: string): boolean {
   return /\.(mp4|webm|ogg|mov)(\?.*)?$/i.test(url)

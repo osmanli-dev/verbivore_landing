@@ -1,8 +1,9 @@
+import { pageMetadata } from '@/lib/seo'
 import Link from 'next/link'
 import { getEditions, getEditionsPage, getCountries, editionHost } from '@/lib/globals'
 
 export const dynamic = 'force-dynamic'
-export const metadata = { title: 'Editions | Verbivore The Contest' }
+export const metadata = pageMetadata({ title: "Editions", description: "Every year a new host country. Explore Verbivore Grand Final editions: hosts, participants, schedules and results.", path: "/editions" })
 
 export default async function EditionsPage() {
   const [ep, editions, countries] = await Promise.all([getEditionsPage(), getEditions(), getCountries()])

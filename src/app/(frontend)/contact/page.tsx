@@ -1,9 +1,10 @@
+import { pageMetadata } from '@/lib/seo'
 import Link from "next/link"
 import { getSiteSettings, getContactPage } from "@/lib/globals"
 import ContactForm from "./ContactForm"
 
 export const dynamic = "force-dynamic"
-export const metadata = { title: "Contact | Verbivore" }
+export const metadata = pageMetadata({ title: "Contact Us", description: "Reach the Verbivore coordination team for questions about participation, accreditation or partnerships.", path: "/contact" })
 
 export default async function ContactPage() {
   const [cp, ss] = await Promise.all([

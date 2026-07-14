@@ -1,5 +1,6 @@
+import { pageMetadata } from '@/lib/seo'
 import Link from 'next/link'
-export const metadata = { title: 'Verbivore | The Contest' }
+export const metadata = pageMetadata({ title: "Verbivore Contest \u2014 Structure, Rounds & Participation", description: "How the Verbivore English olympiad works: three rounds from the school-level Preliminary to the international Grand Final, age categories, and how to take part.", path: "/verbivore" })
 
 const PAGES = [
   { href: '/verbivore/about', icon: '📖', title: 'About', desc: 'What Verbivore is, its mission and history.' },

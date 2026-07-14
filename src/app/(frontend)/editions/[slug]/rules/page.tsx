@@ -1,9 +1,24 @@
+import { pageMetadata } from '@/lib/seo'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { getEditionBySlug } from '@/lib/globals'
+import { getEditionBySlug, editionHost } from '@/lib/globals'
 import { EditionTabs } from '@/components/EditionTabs'
 
 export const dynamic = 'force-dynamic'
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  const ed = await getEditionBySlug(slug)
+  if (!ed) return {}
+  const host = editionHost(ed)
+  const base = [ed.year, host.name, 'Grand Final'].filter(Boolean).join(' ')
+  return pageMetadata({
+    title: `${base} - Rules`,
+    description: `Competition rules and conduct guidelines for the ${base}.`,
+    path: `/editions/${slug}/rules`,
+    image: (ed.heroImage as any)?.url ?? (ed.image as any)?.url ?? undefined,
+  })
+}
 
 export default async function EditionRulesPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params

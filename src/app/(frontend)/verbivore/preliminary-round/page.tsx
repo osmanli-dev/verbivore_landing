@@ -1,8 +1,9 @@
+import { pageMetadata } from '@/lib/seo'
 import Link from 'next/link'
 import { getPreliminaryResources, getPreliminaryPage } from '@/lib/globals'
 
 export const dynamic = 'force-dynamic'
-export const metadata = { title: 'Preliminary Round | Verbivore The Contest' }
+export const metadata = pageMetadata({ title: "Preliminary Round", description: "The first stage of Verbivore, held in schools across all participating countries and open to all registered students.", path: "/verbivore/preliminary-round" })
 
 type CatGroup   = { category: string; grade: string; files: { title: string; pdfUrl: string }[] }
 type RoundGroup = { roundLabel: string; roundIcon: string; categories: CatGroup[] }

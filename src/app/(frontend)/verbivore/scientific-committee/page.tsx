@@ -1,9 +1,10 @@
+import { pageMetadata } from '@/lib/seo'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getCommittee, getSiteSettings } from '@/lib/globals'
 
 export const dynamic = 'force-dynamic'
-export const metadata = { title: 'International Scientific Committee | Verbivore' }
+export const metadata = pageMetadata({ title: "International Scientific Committee", description: "Meet the international scientific committee behind Verbivore - the educators and linguists who design and review the contest materials.", path: "/verbivore/scientific-committee" })
 
 export default async function CommitteePage() {
   const [docs, ss] = await Promise.all([getCommittee(), getSiteSettings()])
