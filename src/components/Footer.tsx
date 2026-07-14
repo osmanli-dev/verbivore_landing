@@ -37,7 +37,6 @@ export default async function Footer() {
             <Link href="/faq">FAQ</Link>
             <Link href="/contact">Contact</Link>
             <Link href="/certificate-verify">Verify Certificate</Link>
-            <Link href="/admin" style={{ opacity: 0.5, fontSize: 12 }}>Admin</Link>
           </div>
         </div>
         <div className="footer-bottom">
