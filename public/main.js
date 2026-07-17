@@ -390,6 +390,14 @@ document.addEventListener('click', function(e) {
     return;
   }
 
+  /* Footer link-group accordion (mobile only — desktop footer has no
+     toggle affordance to click, so this is inert there) */
+  var footAccBtn = e.target.closest('.footer-acc-header');
+  if (footAccBtn) {
+    footAccBtn.closest('.footer-acc-item').classList.toggle('open');
+    return;
+  }
+
   /* Regulations accordion */
   var regBtn = e.target.closest('.reg-header');
   if (regBtn) {
@@ -761,7 +769,14 @@ function initPage() {
         return;
       }
 
-      /* Regulations / category detail: anchor quick-jump (unchanged) */
+      /* Regulations / category detail: anchor quick-jump — highlight the
+         tapped pill (matches whichever section is now open) and scroll
+         to it. The section itself still opens/scrolls exactly as before. */
+      var jumpStrip = btn.closest('.mob-reg-jumps');
+      if (jumpStrip) {
+        jumpStrip.querySelectorAll('.mob-reg-jump').forEach(function(b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+      }
       section.classList.add('open');
       section.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, { signal: sig });

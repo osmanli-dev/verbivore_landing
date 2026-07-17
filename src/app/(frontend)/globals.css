@@ -19,6 +19,13 @@
   --shadow-soft:0 14px 38px rgba(16,23,66,.09);
   --radius:28px;
   --max:1180px;
+
+  /* Mobile spacing/radius scale — additive tokens for the mobile redesign.
+     Numeric (not t-shirt-named) so they map 1:1 onto the informal 8/12/16/
+     20/24/32/40/48px scale already in use throughout the mobile CSS below. */
+  --sp-1:4px;  --sp-2:8px;  --sp-3:12px; --sp-4:16px; --sp-5:20px;
+  --sp-6:24px; --sp-7:32px; --sp-8:40px; --sp-9:48px;
+  --radius-m-sm:14px; --radius-m-md:20px; --radius-m-lg:24px; --radius-m-pill:999px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 /* Reset native button chrome — iOS/macOS Safari renders <button> with its
@@ -1161,11 +1168,15 @@ h1,h2,h3,h4,.section-title,.page-hero h1,.hero h1{font-family:var(--font-baloo),
 /* ── Visibility helpers ────────────────────────────────── */
 .mob-only { display: none }
 .desk-grid { display: grid }
-/* .mob-reg-jumps sets its own unscoped display:flex further down
-   (shared with Regulations/Category quick-jump, out of scope here) —
-   pin the FAQ instance shut on desktop with matching specificity so
-   it can't leak through regardless of source order. */
+/* A handful of mobile-only components (.mob-reg-jumps, .mob-faq-jumps,
+   .mob-news-scroll) set their own unscoped display:flex further down the
+   file, which — at equal specificity — wins over `.mob-only{display:none}`
+   by source order and leaks the element onto desktop. Pin each one shut
+   here with matching compound specificity, then re-enable at that same
+   specificity inside the @media(max-width:768px) block below. */
 .mob-only.mob-faq-jumps { display: none }
+.mob-only.mob-reg-jumps { display: none }
+.mob-only.mob-news-scroll { display: none }
 
 /* ── News pages ────────────────────────────────────────── */
 .news-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px }
@@ -1181,9 +1192,16 @@ h1,h2,h3,h4,.section-title,.page-hero h1,.hero h1{font-family:var(--font-baloo),
 .schedule-date-strip::-webkit-scrollbar { display: none }
 
 /* ── Editions sub-pages ────────────────────────────────── */
-.edition-hero .tabs-list { overflow-x: auto; -webkit-overflow-scrolling: touch; flex-wrap: nowrap; scrollbar-width: none }
+.edition-hero .tabs-list {
+  margin-top: 28px; padding-bottom: 24px; border-bottom: 1px solid rgba(255,255,255,.15);
+  overflow-x: auto; -webkit-overflow-scrolling: touch; flex-wrap: nowrap; scrollbar-width: none;
+}
 .edition-hero .tabs-list::-webkit-scrollbar { display: none }
-.edition-hero .tabs-list a { flex-shrink: 0 }
+.edition-hero .tabs-list a {
+  flex-shrink: 0;
+  color: rgba(255,255,255,.8); background: rgba(255,255,255,.09); border-color: rgba(255,255,255,.18);
+}
+.edition-hero .tabs-list a.active { background: var(--orange); color: #fff; border-color: var(--orange) }
 
 /* ── Countries page apply-button ──────────────────────── */
 .country-card a:not(.btn) { color: var(--orange) }
@@ -1192,6 +1210,30 @@ h1,h2,h3,h4,.section-title,.page-hero h1,.hero h1{font-family:var(--font-baloo),
 @media(max-width:768px){
   .mob-only { display: revert }
   .desk-only { display: none }
+
+  /* ══════════════════════════════════════════════════════
+     MOBILE REDESIGN — GLOBAL BUTTONS & FORM INPUTS
+     Sitewide floor (48px+) so every primary/secondary button
+     and form field is comfortably tappable. More specific
+     selectors already in the file (.btn-sm, .hero-actions
+     .btn, .mob-menu-footer .btn, etc.) still win where a
+     smaller/full-width variant is intentional.
+     ══════════════════════════════════════════════════════ */
+  .btn { min-height: 48px }
+  .field input, .field select, .field textarea { padding: var(--sp-3) var(--sp-4); border-radius: var(--radius-m-sm); min-height: 48px }
+  .field textarea { min-height: 130px }
+
+  /* ══════════════════════════════════════════════════════
+     MOBILE REDESIGN — HEADER / TOP STRIP / DRAWER
+     Spacing-token pass over the existing drawer + guaranteed
+     48px+ touch targets on every nav row.
+     ══════════════════════════════════════════════════════ */
+  .top-strip .container { padding: var(--sp-2) 0 }
+  .mob-menu-head { padding: var(--sp-4) var(--sp-5) }
+  .mob-nav { padding: var(--sp-3) var(--sp-3) var(--sp-4) }
+  .mob-nav-link { min-height: 48px; padding: var(--sp-3) var(--sp-4); gap: var(--sp-3) }
+  .mob-nav-sub { min-height: 44px; display: flex; align-items: center; padding: var(--sp-3) var(--sp-4) var(--sp-3) 48px }
+  .mob-menu-footer { padding: var(--sp-4) var(--sp-5) max(var(--sp-6), env(safe-area-inset-bottom)); gap: var(--sp-3) }
 
   /* ══════════════════════════════════════════════════════
      MOBILE REDESIGN — SHARED COMPONENTS
@@ -1203,6 +1245,11 @@ h1,h2,h3,h4,.section-title,.page-hero h1,.hero h1{font-family:var(--font-baloo),
     display: flex; gap: 10px; overflow-x: auto;
     -webkit-overflow-scrolling: touch; scroll-snap-type: x mandatory;
     scrollbar-width: none; padding: 2px 2px 6px; margin: 0 -2px;
+    /* fade the trailing edge instead of hard-clipping the next pill —
+       the 4px trailing spacer alone (see "trailing whitespace" fix
+       further down) isn't enough of a cue on its own */
+    mask-image: linear-gradient(90deg,#000 calc(100% - 28px),transparent 100%);
+    -webkit-mask-image: linear-gradient(90deg,#000 calc(100% - 28px),transparent 100%);
   }
   .mob-stat-strip::-webkit-scrollbar { display: none }
   .mob-stat-pill {
@@ -1217,7 +1264,7 @@ h1,h2,h3,h4,.section-title,.page-hero h1,.hero h1{font-family:var(--font-baloo),
     font-size: 11px; color: var(--muted); font-weight: 800;
     text-transform: uppercase; letter-spacing: .04em;
   }
-  .mob-stat-pill.wide { min-width: 175px }
+  .mob-stat-pill.wide { min-width: 175px; max-width: 200px }
   .mob-stat-pill.wide b { font-size: 14px; font-weight: 900; line-height: 1.35 }
 
   /* ── Stepper: vertical connected step list ──────────── */
@@ -1276,9 +1323,16 @@ h1,h2,h3,h4,.section-title,.page-hero h1,.hero h1{font-family:var(--font-baloo),
     display: flex; gap: 10px; overflow-x: auto;
     -webkit-overflow-scrolling: touch; scroll-snap-type: x mandatory;
     scrollbar-width: none; padding: 2px 2px 6px;
+    mask-image: linear-gradient(90deg,#000 calc(100% - 28px),transparent 100%);
+    -webkit-mask-image: linear-gradient(90deg,#000 calc(100% - 28px),transparent 100%);
   }
   .mob-pdf-row::-webkit-scrollbar { display: none }
-  .mob-pdf-row .prelim-pdf-item { flex: 0 0 auto; min-width: 230px; scroll-snap-align: start }
+  .mob-pdf-row .prelim-pdf-item {
+    flex: 0 0 auto; width: 250px; scroll-snap-align: start;
+    /* fixed width (not min-width) so the long document title inside
+       actually hits text-overflow:ellipsis instead of stretching the
+       card past the fade mask */
+  }
 
   /* ── Regulation accordion: tighter mobile padding ───── */
   .reg-header { padding: 16px 16px }
@@ -1317,6 +1371,8 @@ h1,h2,h3,h4,.section-title,.page-hero h1,.hero h1{font-family:var(--font-baloo),
     display: flex; gap: 8px; overflow-x: auto;
     -webkit-overflow-scrolling: touch; scroll-snap-type: x mandatory;
     scrollbar-width: none; padding: 2px 2px 14px; margin: 0 -2px;
+    mask-image: linear-gradient(90deg,#000 calc(100% - 28px),transparent 100%);
+    -webkit-mask-image: linear-gradient(90deg,#000 calc(100% - 28px),transparent 100%);
   }
   .mob-pill-tabs::-webkit-scrollbar { display: none }
   .mob-pill-tab {
@@ -1464,6 +1520,8 @@ h1,h2,h3,h4,.section-title,.page-hero h1,.hero h1{font-family:var(--font-baloo),
     display: flex; gap: 8px; overflow-x: auto;
     -webkit-overflow-scrolling: touch; scroll-snap-type: x mandatory;
     scrollbar-width: none; padding: 2px 2px 14px; margin: 0 -2px;
+    mask-image: linear-gradient(90deg,#000 calc(100% - 28px),transparent 100%);
+    -webkit-mask-image: linear-gradient(90deg,#000 calc(100% - 28px),transparent 100%);
   }
   .mob-round-tabs::-webkit-scrollbar { display: none }
   .mob-round-tab {
@@ -1497,6 +1555,8 @@ h1,h2,h3,h4,.section-title,.page-hero h1,.hero h1{font-family:var(--font-baloo),
     display: flex; gap: 12px; overflow-x: auto;
     -webkit-overflow-scrolling: touch; scroll-snap-type: x mandatory;
     scrollbar-width: none; padding: 2px 2px 8px; margin-top: 16px;
+    mask-image: linear-gradient(90deg,#000 calc(100% - 28px),transparent 100%);
+    -webkit-mask-image: linear-gradient(90deg,#000 calc(100% - 28px),transparent 100%);
   }
   .mob-value-row::-webkit-scrollbar { display: none }
   .mob-value-row .value-card { flex: 0 0 auto; width: 230px; scroll-snap-align: start; padding: 22px }
@@ -1567,6 +1627,73 @@ h1,h2,h3,h4,.section-title,.page-hero h1,.hero h1{font-family:var(--font-baloo),
     color: #fff;
   }
 
+  /* Re-enable the News related-article scroll strip (Regulations/Category
+     quick-jump gets its own full re-style just below instead of a bare
+     re-enable — see MOBILE REDESIGN — QUICK-JUMP FAMILY). */
+  .mob-only.mob-news-scroll { display: flex }
+
+  /* ══════════════════════════════════════════════════════
+     MOBILE REDESIGN — QUICK-JUMP FAMILY (Regulations,
+     Category detail accordion sections)
+     Same segmented-control visual language as .mob-faq-jumps
+     (sticky, backdrop-blur, edge-fade mask instead of hard
+     text clipping) but keeps the anchor-jump interaction —
+     these sections are long-form text meant to be read in
+     order, not swapped panels. The :not(.mob-faq-jumps) guard
+     keeps this from ever touching the FAQ tab bar, which
+     shares the base .mob-reg-jumps/.mob-reg-jump classes but
+     already has its own compound-specificity styling above.
+     ══════════════════════════════════════════════════════ */
+  .mob-only.mob-reg-jumps:not(.mob-faq-jumps) {
+    position: sticky; top: 67px; z-index: 5;
+    display: flex; flex-wrap: nowrap; gap: 8px;
+    overflow-x: auto; scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x proximity;
+    background: rgba(247,248,255,.9);
+    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-m-pill);
+    padding: 5px;
+    margin: 0 0 var(--sp-5);
+    box-shadow: var(--shadow-soft);
+    mask-image: linear-gradient(90deg,#000 calc(100% - 28px),transparent 100%);
+    -webkit-mask-image: linear-gradient(90deg,#000 calc(100% - 28px),transparent 100%);
+  }
+  .mob-reg-jumps:not(.mob-faq-jumps)::-webkit-scrollbar { display: none }
+  .mob-reg-jumps:not(.mob-faq-jumps) .mob-reg-jump {
+    flex: 0 0 auto; scroll-snap-align: start;
+    min-height: 36px; padding: 8px 15px;
+    border-radius: var(--radius-m-pill);
+    background: transparent; border: 1px solid transparent;
+    color: var(--navy);
+    font-size: 12.5px; font-weight: 850;
+    transition: background-color .25s ease, color .25s ease, transform .15s ease;
+  }
+  .mob-reg-jumps:not(.mob-faq-jumps) .mob-reg-jump:active { transform: scale(.96) }
+  .mob-reg-jumps:not(.mob-faq-jumps) .mob-reg-jump.active {
+    background: var(--orange);
+    color: #fff;
+  }
+  .reg-section { scroll-margin-top: 130px }
+
+  /* ── .travel-hero (Category detail cover, also Edition welcome
+        banner) — desktop's 48px padding + clamp(32px…) heading leaves
+        almost no room on a 375-390px screen, overflowing tag pills
+        past the card edge. Tighten for mobile only. ──────────── */
+  .travel-hero { border-radius: var(--radius-m-lg); margin-bottom: var(--sp-5) }
+  .travel-hero-content {
+    padding: var(--sp-6) var(--sp-5); min-height: 260px;
+    /* The shared .travel-hero-overlay is a diagonal gradient tuned for wide
+       desktop cards — on a narrow mobile card the bottom-anchored text
+       (justify-content:flex-end) can land on a bright part of the photo
+       with too little contrast. Layer an extra bottom-up scrim behind the
+       text specifically on mobile. */
+    background: linear-gradient(to top, rgba(6,10,30,.82) 15%, rgba(6,10,30,.25) 65%, transparent 100%);
+  }
+  .travel-hero-content h2 { font-size: clamp(24px,7vw,32px) }
+  .travel-hero-content p { font-size: 14.5px; line-height: 1.55 }
+
   /* Denser FAQ cards */
   .faq-list { gap: 10px }
   .faq-item { border-radius: 18px }
@@ -1580,6 +1707,39 @@ h1,h2,h3,h4,.section-title,.page-hero h1,.hero h1{font-family:var(--font-baloo),
   .faq-q span { font-size: 19px }
   .faq-a { padding: 0 16px 16px; margin: 0 16px; font-size: 13.5px }
   .faq-item.active .faq-a { animation: faqAnswerInMobile .28s cubic-bezier(.22,1,.36,1) }
+
+  /* ══════════════════════════════════════════════════════
+     MOBILE REDESIGN — FOOTER
+     Brand block stays flat/visible; the 3 link groups become
+     a collapsible accordion instead of 14 links stacked flat
+     (was the single worst "desktop compressed onto mobile"
+     offender on the site — Footer had no mobile split at all).
+     ══════════════════════════════════════════════════════ */
+  .footer-mob-brand { margin-bottom: var(--sp-6) }
+  .footer-mob-brand img { width: 160px; background:#fff; border-radius: var(--radius-m-sm); padding: 5px; margin-bottom: var(--sp-4) }
+  .footer-mob-brand p { color: rgba(255,255,255,.64); line-height: 1.6; font-size: 14px }
+
+  .footer-acc-item { border-top: 1px solid rgba(255,255,255,.11) }
+  .footer-acc-item:last-child { border-bottom: 1px solid rgba(255,255,255,.11) }
+  .footer-acc-header {
+    width: 100%; min-height: 52px;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: var(--sp-4) 0;
+    color: var(--orange-2); font-weight: 900; font-size: 15px;
+  }
+  .footer-acc-header:active { opacity: .7 }
+  .footer-acc-arrow {
+    font-size: 20px; font-weight: 700; line-height: 1; flex-shrink: 0;
+    color: rgba(255,255,255,.4); transition: transform .22s ease, color .22s ease;
+  }
+  .footer-acc-item.open .footer-acc-arrow { transform: rotate(45deg); color: var(--orange-2) }
+  .footer-acc-body { display: none }
+  .footer-acc-item.open .footer-acc-body {
+    display: flex; flex-direction: column; gap: var(--sp-3);
+    padding-bottom: var(--sp-5);
+    animation: fadeSlideIn .25s ease;
+  }
+  .footer-acc-body a { color: rgba(255,255,255,.73); font-weight: 770; font-size: 14.5px }
 
   /* ══════════════════════════════════════════════════════
      MOBILE REDESIGN — CERTIFICATE VERIFY
@@ -1800,6 +1960,8 @@ h1,h2,h3,h4,.section-title,.page-hero h1,.hero h1{font-family:var(--font-baloo),
   display: flex; gap: 8px; overflow-x: auto;
   -webkit-overflow-scrolling: touch; scrollbar-width: none;
   padding: 2px 0 14px; margin-bottom: 4px;
+  mask-image: linear-gradient(90deg,#000 calc(100% - 28px),transparent 100%);
+  -webkit-mask-image: linear-gradient(90deg,#000 calc(100% - 28px),transparent 100%);
 }
 .mob-country-filters::-webkit-scrollbar { display: none }
 .mob-filter-pill {
@@ -2047,6 +2209,8 @@ h1,h2,h3,h4,.section-title,.page-hero h1,.hero h1{font-family:var(--font-baloo),
   display: flex; gap: 12px; overflow-x: auto;
   -webkit-overflow-scrolling: touch; scroll-snap-type: x mandatory;
   scrollbar-width: none; padding: 2px 2px 8px;
+  mask-image: linear-gradient(90deg,#000 calc(100% - 28px),transparent 100%);
+  -webkit-mask-image: linear-gradient(90deg,#000 calc(100% - 28px),transparent 100%);
 }
 .mob-news-scroll::-webkit-scrollbar { display: none }
 .mob-news-card {
@@ -2126,11 +2290,15 @@ h1,h2,h3,h4,.section-title,.page-hero h1,.hero h1{font-family:var(--font-baloo),
 .mob-cat-tabs {
   display: flex; gap: 8px; margin-bottom: 20px;
   overflow-x: auto; -webkit-overflow-scrolling: touch;
-  scrollbar-width: none; padding: 2px 0 4px;
+  scrollbar-width: none; padding: 2px 2px 4px;
+  /* fade the trailing edge instead of hard-clipping the next tab —
+     same treatment as the FAQ/Regulations quick-jump bars */
+  mask-image: linear-gradient(90deg,#000 calc(100% - 28px),transparent 100%);
+  -webkit-mask-image: linear-gradient(90deg,#000 calc(100% - 28px),transparent 100%);
 }
 .mob-cat-tabs::-webkit-scrollbar { display: none }
 .mob-cat-tab {
-  flex-shrink: 0; padding: 10px 18px; border-radius: 999px;
+  flex-shrink: 0; min-height: 44px; padding: 10px 18px; border-radius: var(--radius-m-pill);
   border: 2px solid var(--line); background: #fff;
   font-size: 14px; font-weight: 900; color: var(--muted);
   cursor: pointer; transition: .18s ease;
@@ -2662,7 +2830,14 @@ h1,h2,h3,h4,.section-title,.page-hero h1,.hero h1{font-family:var(--font-baloo),
   .gf-hero-body    { flex-direction: column; gap: 24px }
   .gf-hero-trophy  { align-self: stretch; display: flex; align-items: center; gap: 24px; padding: 20px 24px }
   .gf-trophy-icon  { font-size: 40px; margin-bottom: 0 }
-  .gf-trophy-stats { flex: 1 }
+  .gf-trophy-stats {
+    flex: 1; min-width: 0; overflow-x: auto; scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    mask-image: linear-gradient(90deg,#000 calc(100% - 20px),transparent 100%);
+    -webkit-mask-image: linear-gradient(90deg,#000 calc(100% - 20px),transparent 100%);
+  }
+  .gf-trophy-stats::-webkit-scrollbar { display: none }
+  .gf-trophy-stat { flex-shrink: 0 }
   .gf-phase-wrap   { top: 0; position: relative }
   .gf-sidebar      { position: static }
   .gf-results-upcoming { flex-direction: column }
@@ -2818,6 +2993,8 @@ button:focus-visible,a:focus-visible{border-radius:6px}
     padding:2px 0 12px;
     /* override the earlier 1-col grid */
     grid-template-columns:unset;
+    mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent 100%);
+    -webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent 100%);
   }
   .gallery-grid::-webkit-scrollbar{display:none}
 
@@ -2924,13 +3101,9 @@ button:focus-visible,a:focus-visible{border-radius:6px}
   .news-track a{font-size:12px;margin-right:22px}
 }
 
-/* ── 17. Footer — tighter spacing on narrow phones ──────────── */
-@media(max-width:480px){
-  .footer h4{margin-bottom:8px}
-  .footer a{margin:7px 0}
-  .footer-grid{gap:18px}
-  .footer img{width:140px}
-}
+/* ── 17. (removed) Footer narrow-phone tightening — the mobile footer
+        is no longer the flat .footer-grid (now desk-only); replaced by
+        the .footer-acc-* accordion styled in the FOOTER block above. ── */
 
 /* ── 18. Result table — hide third column at 360 px ──────────── */
 @media(max-width:360px){
@@ -3031,7 +3204,7 @@ button:focus-visible,a:focus-visible{border-radius:6px}
   .eh-stat{padding:10px 10px;border-radius:16px}
 }
 
-/* ── 18. Mobile navbar — slimmer bar & logo ─────────────────── */
+/* ── 32. Mobile navbar — slimmer bar & logo ─────────────────── */
 @media(max-width:768px){
   .navbar{min-height:59px;gap:12px}
   .brand img{width:143px}
@@ -3040,7 +3213,7 @@ button:focus-visible,a:focus-visible{border-radius:6px}
   .top-strip .container{padding:5px 0}
 }
 
-/* ── 19. Mobile hero — compact typography ───────────────────── */
+/* ── 33. Mobile hero — compact typography ───────────────────── */
 @media(max-width:768px){
   .hero{padding:14px 0 0}
   .eyebrow{margin-bottom:10px;padding:6px 12px;font-size:11px}
@@ -3064,7 +3237,7 @@ button:focus-visible,a:focus-visible{border-radius:6px}
   .news-track a{font-size:12px}
 }
 
-/* ── 20. Mobile hero — lock to one viewport so the news ticker
+/* ── 34. Mobile hero — lock to one viewport so the news ticker
         is always visible without scrolling. Guarded by min-height
         so short/landscape screens fall back to natural flow. ── */
 @media(max-width:768px) and (min-height:560px){

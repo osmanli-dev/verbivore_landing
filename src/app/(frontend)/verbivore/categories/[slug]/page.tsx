@@ -112,7 +112,13 @@ export default async function CategoryDetailPage({ params }: { params: Promise<{
             {/* Mobile quick-jump pills */}
             <div className="mob-only mob-reg-jumps">
               {sections.map((sec: any, i: number) => (
-                <button key={i} className="mob-reg-jump" data-reg-id={`cat-${i}`}>{sec.icon || '📋'} {sec.title}</button>
+                <button
+                  key={i}
+                  className={`mob-reg-jump${i === 0 ? ' active' : ''}`}
+                  data-reg-id={`cat-${i}`}
+                >
+                  {sec.icon || '📋'} {sec.title}
+                </button>
               ))}
             </div>
 

@@ -5,40 +5,82 @@ import { getSiteSettings } from "@/lib/globals"
 export default async function Footer() {
   const ss = await getSiteSettings()
 
+  const linkGroups = [
+    {
+      title: "Verbivore",
+      links: [
+        { href: "/verbivore/about", label: "About" },
+        { href: "/verbivore/categories", label: "Categories" },
+        { href: "/verbivore/regulations", label: "Regulations" },
+        ...(ss.showScientificCommittee !== false
+          ? [{ href: "/verbivore/scientific-committee", label: "Scientific Committee" }]
+          : []),
+        { href: "/verbivore/sample-questions", label: "Sample Questions" },
+      ],
+    },
+    {
+      title: "Participate",
+      links: [
+        { href: "/verbivore/countries-territories", label: "Countries & Territories" },
+        { href: "/verbivore/exam-time", label: "Exam Time" },
+        { href: "/verbivore/preliminary-round", label: "Preliminary Round" },
+        { href: "/verbivore/national-final", label: "National Final" },
+        { href: "/verbivore/global-final", label: "Global Final" },
+      ],
+    },
+    {
+      title: "Info",
+      links: [
+        { href: "/editions", label: "Editions" },
+        { href: "/faq", label: "FAQ" },
+        { href: "/contact", label: "Contact" },
+        { href: "/certificate-verify", label: "Verify Certificate" },
+      ],
+    },
+  ]
+
   return (
     <footer className="footer">
       <div className="container">
-        <div className="footer-grid">
+        {/* ── Desktop: unchanged 4-column grid ─────────────── */}
+        <div className="footer-grid desk-only">
           <div>
             <Image src="/verbivore-logo.png" alt="Verbivore" width={205} height={56} />
             <p>{ss.footerDescription}</p>
           </div>
-          <div>
-            <h4>Verbivore</h4>
-            <Link href="/verbivore/about">About</Link>
-            <Link href="/verbivore/categories">Categories</Link>
-            <Link href="/verbivore/regulations">Regulations</Link>
-            {ss.showScientificCommittee !== false && (
-              <Link href="/verbivore/scientific-committee">Scientific Committee</Link>
-            )}
-            <Link href="/verbivore/sample-questions">Sample Questions</Link>
+          {linkGroups.map((g) => (
+            <div key={g.title}>
+              <h4>{g.title}</h4>
+              {g.links.map((l) => (
+                <Link key={l.href} href={l.href}>{l.label}</Link>
+              ))}
+            </div>
+          ))}
+        </div>
+
+        {/* ── Mobile: brand block + collapsible link accordion ── */}
+        <div className="mob-only footer-mob">
+          <div className="footer-mob-brand">
+            <Image src="/verbivore-logo.png" alt="Verbivore" width={160} height={44} />
+            <p>{ss.footerDescription}</p>
           </div>
-          <div>
-            <h4>Participate</h4>
-            <Link href="/verbivore/countries-territories">Countries &amp; Territories</Link>
-            <Link href="/verbivore/exam-time">Exam Time</Link>
-            <Link href="/verbivore/preliminary-round">Preliminary Round</Link>
-            <Link href="/verbivore/national-final">National Final</Link>
-            <Link href="/verbivore/global-final">Global Final</Link>
-          </div>
-          <div>
-            <h4>Info</h4>
-            <Link href="/editions">Editions</Link>
-            <Link href="/faq">FAQ</Link>
-            <Link href="/contact">Contact</Link>
-            <Link href="/certificate-verify">Verify Certificate</Link>
+          <div className="footer-acc">
+            {linkGroups.map((g) => (
+              <div key={g.title} className="footer-acc-item">
+                <button className="footer-acc-header">
+                  {g.title}
+                  <span className="footer-acc-arrow">+</span>
+                </button>
+                <div className="footer-acc-body">
+                  {g.links.map((l) => (
+                    <Link key={l.href} href={l.href}>{l.label}</Link>
+                  ))}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
+
         <div className="footer-bottom">
           <span>&copy; {new Date().getFullYear()} {ss.footerCopyright}</span>
           <span className="footer-credit">
