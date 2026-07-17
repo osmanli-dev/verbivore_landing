@@ -729,27 +729,43 @@ function initPage() {
     }, { signal: sig });
   });
 
-  /* ── Mobile: Regulations / FAQ quick-jump ── */
+  /* ── Mobile: Regulations / Category quick-jump, FAQ tabs ── */
   document.querySelectorAll('.mob-reg-jump').forEach(function(btn) {
     btn.addEventListener('click', function() {
       var id = btn.getAttribute('data-reg-id');
       var section = document.getElementById('reg-' + id);
       if (!section) return;
-      /* Active pill state (FAQ tabs) */
+
       var strip = btn.closest('.mob-faq-jumps');
       if (strip) {
-        strip.querySelectorAll('.mob-reg-jump').forEach(function(b) { b.classList.remove('active'); });
+        /* FAQ: swap the visible category panel in place — the initial
+           active pill/panel is already server-rendered, this just
+           keeps them in sync on subsequent taps. No page scroll. */
+        strip.querySelectorAll('.mob-reg-jump').forEach(function(b) {
+          b.classList.remove('active');
+          b.removeAttribute('aria-current');
+        });
         btn.classList.add('active');
+        btn.setAttribute('aria-current', 'true');
         btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+
+        var group = section.parentElement;
+        if (group) {
+          group.querySelectorAll('.faq-group').forEach(function(g) { g.classList.remove('mob-faq-active'); });
+        }
+        section.classList.add('mob-faq-active');
+        /* Bring the newly active panel's top into view — accounts for
+           the sticky navbar + tab bar via scroll-margin-top so shorter
+           categories never leave the user scrolled past their content. */
+        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        return;
       }
+
+      /* Regulations / category detail: anchor quick-jump (unchanged) */
       section.classList.add('open');
       section.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, { signal: sig });
   });
-
-  /* ── FAQ: mark first tab active on load ── */
-  var firstFaqPill = document.querySelector('.mob-faq-jumps .mob-reg-jump');
-  if (firstFaqPill) firstFaqPill.classList.add('active');
 
   /* ── Certificate verify (plain-JS fallback for any page that
      might embed the verify widget outside of the React component) ── */

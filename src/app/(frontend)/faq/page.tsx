@@ -15,6 +15,7 @@ export default async function FAQPage() {
     group: g,
     items: docs.filter((d) => d.group === g),
   }))
+  const firstActiveIdx = byGroup.findIndex((g) => g.items.length > 0)
 
   const faqJsonLd = {
     '@context': 'https://schema.org',
@@ -41,18 +42,31 @@ export default async function FAQPage() {
 
       <section>
         <div className="container">
-          {/* Mobile quick-jump pills */}
-          <div className="mob-only mob-reg-jumps mob-faq-jumps">
+          {/* Mobile category switcher — real tab-panel behaviour on
+              mobile (see .faq-group / .mob-faq-active in globals.css);
+              desktop ignores it entirely and shows every group at once. */}
+          <div className="mob-only mob-reg-jumps mob-faq-jumps" aria-label="FAQ categories">
             {byGroup.map(({ group, items }, gi) => items.length > 0 && (
-              <button key={group} className="mob-reg-jump" data-reg-id={`faq-${gi}`}>{group}</button>
+              <button
+                key={group}
+                className={`mob-reg-jump${gi === firstActiveIdx ? ' active' : ''}`}
+                data-reg-id={`faq-${gi}`}
+                aria-current={gi === firstActiveIdx ? 'true' : undefined}
+              >
+                {group}
+              </button>
             ))}
           </div>
 
           <div className="two-col" style={{ gap: 32 }}>
             <div>
               {byGroup.map(({ group, items }, gi) => items.length > 0 && (
-                <div key={group} id={`reg-faq-${gi}`} style={{ marginBottom: 36 }}>
-                  <h2 style={{ color: 'var(--navy-2)', marginBottom: 14, fontSize: 22 }}>{group}</h2>
+                <div
+                  key={group}
+                  id={`reg-faq-${gi}`}
+                  className={`faq-group${gi === firstActiveIdx ? ' mob-faq-active' : ''}`}
+                >
+                  <h2 className="faq-group-title">{group}</h2>
                   <div className="faq-list">
                     {items.map((item) => (
                       <div key={item.id} className="faq-item">
@@ -68,7 +82,7 @@ export default async function FAQPage() {
               ))}
             </div>
             <div className="faq-sidebar" style={{ display: 'flex', flexDirection: 'column', gap: 16, alignSelf: 'flex-start', position: 'sticky', top: 100 }}>
-              <div className="panel">
+              <div className="panel desk-only">
                 <h3>📚 Categories</h3>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 12 }}>
                   {GROUPS.map((g) => (
