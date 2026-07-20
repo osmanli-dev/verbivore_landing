@@ -24,17 +24,34 @@ export const CLIENT_SCRIPT = `
 		for (var k in styles) el.style[k] = styles[k];
 	}
 
-	function makeLink(label, href, bg) {
-		var a = document.createElement('a');
-		a.textContent = label;
-		a.href = href;
-		style(a, {
+	function makeBtn(label, bg) {
+		var b = document.createElement('button');
+		b.textContent = label;
+		b.type = 'button';
+		style(b, {
 			background: bg, color: '#fff', padding: '10px 16px', borderRadius: '8px',
 			fontFamily: 'system-ui, sans-serif', fontSize: '13px', fontWeight: '600',
-			textDecoration: 'none', boxShadow: '0 4px 12px rgba(0,0,0,.25)', cursor: 'pointer',
+			border: '0', boxShadow: '0 4px 12px rgba(0,0,0,.25)', cursor: 'pointer',
 			display: 'inline-block',
 		});
-		return a;
+		return b;
+	}
+
+	function doDownload(url, filename) {
+		fetch(url, { credentials: 'include' })
+			.then(function (r) {
+				if (!r.ok) throw new Error('Server returned ' + r.status);
+				return r.blob();
+			})
+			.then(function (blob) {
+				var a = document.createElement('a');
+				a.href = URL.createObjectURL(blob);
+				a.download = filename;
+				document.body.appendChild(a);
+				a.click();
+				setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+			})
+			.catch(function (e) { showResult('Download Failed', { errors: [{ message: e.message }] }); });
 	}
 
 	function showResult(title, data) {
@@ -128,16 +145,22 @@ export const CLIENT_SCRIPT = `
 			display: 'flex', gap: '8px', alignItems: 'center',
 		});
 
-		var importBtn = makeLink('⬆ Import Excel', 'javascript:void(0)', '#ff821a');
+		var importBtn = makeBtn('⬆ Import Excel', '#ff821a');
 		importBtn.onclick = function () { doUpload('/bulk-import/' + encodeURIComponent(collection), 'Import into ' + collection); };
 		wrap.appendChild(importBtn);
-		wrap.appendChild(makeLink('Template', '/bulk-import/template/' + encodeURIComponent(collection), '#17205a'));
+
+		var tplBtn = makeBtn('📥 Template', '#17205a');
+		tplBtn.onclick = function () { doDownload('/bulk-import/template/' + encodeURIComponent(collection), collection + '-import-template.xlsx'); };
+		wrap.appendChild(tplBtn);
 
 		if (collection === 'editions') {
-			var resultsBtn = makeLink('🏆 Import Results', 'javascript:void(0)', '#2fcf7f');
+			var resultsBtn = makeBtn('🏆 Import Results', '#2fcf7f');
 			resultsBtn.onclick = function () { doUpload('/bulk-import/results', 'Import Results'); };
 			wrap.appendChild(resultsBtn);
-			wrap.appendChild(makeLink('Template', '/bulk-import/template/results', '#17205a'));
+
+			var resultsTplBtn = makeBtn('📥 Results Template', '#17205a');
+			resultsTplBtn.onclick = function () { doDownload('/bulk-import/template/results', 'results-import-template.xlsx'); };
+			wrap.appendChild(resultsTplBtn);
 		}
 
 		document.body.appendChild(wrap);
