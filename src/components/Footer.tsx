@@ -83,10 +83,6 @@ export default async function Footer() {
 
         <div className="footer-bottom">
           <span>&copy; {new Date().getFullYear()} {ss.footerCopyright}</span>
-          <span className="footer-credit">
-            Developed by{' '}
-            <a href="https://scientra.one" target="_blank" rel="noopener noreferrer">Scientra One</a>
-          </span>
           <span>{ss.contactEmail}</span>
         </div>
       </div>
